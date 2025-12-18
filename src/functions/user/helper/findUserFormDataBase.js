@@ -1,8 +1,8 @@
 import fs from "fs";
 import path from "path";
+import userPath from "../../../const/path/userPath.js";
 
-const BASE_DB_PATH = "D:/DataBase/users";
-const INDEX_FILE = path.join(BASE_DB_PATH, "index.json");
+const INDEX_FILE = path.join(userPath, "index.json");
 
 const findUserFormDataBase = async (phone) => {
   if (!fs.existsSync(INDEX_FILE)) {
@@ -24,7 +24,7 @@ const findUserFormDataBase = async (phone) => {
     };
   }
 
-  const userPath = path.join(BASE_DB_PATH, `user_${userId}`, `${userId}.json`);
+  const userPath = path.join(userPath, `user_${userId}`, `${userId}.json`);
 
   if (!fs.existsSync(userPath)) {
     return {

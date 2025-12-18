@@ -1,10 +1,9 @@
 import fs from "fs";
 import path from "path";
-
-const BASE_DB_PATH = "D:/DataBase/Uploads/Photos/users";
+import PhotosPath from "../../const/path/photosPath.js";
 
 const searchAllImg = async (userId) => {
-  const userRoot = path.join(BASE_DB_PATH, userId);
+  const userRoot = path.join(PhotosPath, userId);
   const metaFile = path.join(userRoot, "metadata.json");
 
   if (!fs.existsSync(userRoot)) {

@@ -1,12 +1,12 @@
 import fs from "fs";
 import path from "path";
+import PhotosPath from "../../const/path/photosPath.js";
 
-const BASE_DB_PATH = "D:/DataBase/Uploads/Photos/users";
 
 const deleteImages = async (id, phone, itemId) => {
   const imageIds = Array.isArray(itemId) ? itemId : [itemId];
 
-  const userRoot = path.join(BASE_DB_PATH, id);
+  const userRoot = path.join(PhotosPath, id);
   const metaFile = path.join(userRoot, "metadata.json");
   const indexFile = path.join(userRoot, "index.json");
   if (!fs.existsSync(userRoot)) {

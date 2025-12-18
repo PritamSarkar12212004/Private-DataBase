@@ -1,11 +1,11 @@
 import fs from "fs";
 import path from "path";
+import userPath from "../../../const/path/userPath.js";
 
-const BASE_DB_PATH = "D:/DataBase/users";
-const INDEX_FILE = path.join(BASE_DB_PATH, "index.json");
+const INDEX_FILE = path.join(userPath, "index.json");
 
 const saveUploadUser = async (userData) => {
-  const userDir = path.join(BASE_DB_PATH, `user_${userData.id}`);
+  const userDir = path.join(userPath, `user_${userData.id}`);
   fs.mkdirSync(userDir, { recursive: true });
 
   // user metadata

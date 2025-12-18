@@ -1,8 +1,8 @@
 import fs from "fs";
 import path from "path";
+import userPath from "../../../const/path/userPath.js";
 
-const BASE_DB_PATH = "D:/DataBase/users";
-const INDEX_FILE = path.join(BASE_DB_PATH, "index.json");
+const INDEX_FILE = path.join(userPath, "index.json");
 
 const idVarification = async (phone, token) => {
   if (!fs.existsSync(INDEX_FILE)) {
@@ -22,7 +22,7 @@ const idVarification = async (phone, token) => {
   }
 
   const userPath = path.join(
-    BASE_DB_PATH,
+    userPath,
     `user_${storedToken}`,
     `${storedToken}.json`
   );

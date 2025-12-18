@@ -1,8 +1,7 @@
 import fs from "fs";
 import path from "path";
 import uniqid from "uniqid";
-
-const BASE_DB_PATH = "D:/DataBase/Uploads/Photos/users";
+import PhotosPath from "../../../const/path/photosPath.js";
 
 const saveUploadToDisk = async (photos, baseUrl, auth) => {
   if (!auth || !auth.id) {
@@ -12,7 +11,7 @@ const saveUploadToDisk = async (photos, baseUrl, auth) => {
   const { id, userName, userPhone } = auth;
 
   // USER ROOT
-  const userRoot = path.join(BASE_DB_PATH, id);
+  const userRoot = path.join(PhotosPath, id);
   const originalsDir = path.join(userRoot, "originals");
   const thumbsDir = path.join(userRoot, "thumbnails");
 
