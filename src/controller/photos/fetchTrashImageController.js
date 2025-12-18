@@ -1,7 +1,7 @@
 import idVarification from "../../functions/global/token/idVarification.js";
-import searchAllImg from "../../functions/photos/searchAllImg.js";
+import fetchTrashImages from "../../functions/photos/fetchTrashImage.js";
 
-const searchAllImgController = async (req, res) => {
+const fetchTrashImageController = async (req, res) => {
   if (!req.body.id || !req.body.phone) {
     return res.status(400).json({
       message: "Provide Id and PhoneNumber For Authentication",
@@ -16,7 +16,7 @@ const searchAllImgController = async (req, res) => {
     });
   }
   try {
-    const photos = await searchAllImg(req.body.id);
+    const photos = await fetchTrashImages(req.body.id);
     if (photos.error) {
       return res.status(404).json({
         message: check.error.message,
@@ -37,4 +37,4 @@ const searchAllImgController = async (req, res) => {
     });
   }
 };
-export default searchAllImgController;
+export default fetchTrashImageController;

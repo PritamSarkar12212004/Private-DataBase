@@ -2,7 +2,7 @@ import fs from "fs";
 import path from "path";
 import PhotosPath from "../../const/path/photosPath.js";
 
-const searchAllImg = async (userId) => {
+const fetchMainImage = async (userId) => {
   const userRoot = path.join(PhotosPath, userId);
   const metaFile = path.join(userRoot, "metadata.json");
 
@@ -28,4 +28,4 @@ const searchAllImg = async (userId) => {
   return { userId, totalImages: images.length, images, owner: metaData.owner };
 };
 
-export default searchAllImg;
+export default fetchMainImage;
