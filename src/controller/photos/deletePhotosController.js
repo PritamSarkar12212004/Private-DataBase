@@ -1,14 +1,15 @@
 import idVarification from "../../functions/global/token/idVarification.js";
-import searchAllImg from "../../functions/photos/searchAllImg.js";
+import deleteImages from "../../functions/photos/deleteImages.js";
 
-const searchAllImgController = async (req, res) => {
-  if (!req.body.id || !req.body.phone) {
+const deletePhotosController = async (req, res) => {
+  if (!req.body.id || !req.body.phone || !req.body.itemId) {
     return res.status(400).json({
-      message: "Provide Id and PhoneNumber For Authentication",
+      message: "Provide Id and PhoneNumber For Authentication And Photos Id",
       status: false,
       data: null,
     });
   }
+  const { id, phone, itemId } = await req.body;
   const check = await idVarification(req.body.phone, req.body.id);
   if (check.error) {
     return res.status(404).json({
@@ -16,17 +17,16 @@ const searchAllImgController = async (req, res) => {
     });
   }
   try {
-    const photos = await searchAllImg(req.body.id);
-    if (photos.error) {
+    const data = await deleteImages(id, phone, itemId);
+    if (data.error) {
       return res.status(404).json({
         message: check.error.message,
       });
     }
-
     res.status(200).json({
       status: true,
-      data: photos,
-      message: "Data Fetch Done",
+      data: data,
+      message: "Delete Action on Photos",
     });
   } catch (error) {
     console.error(error);
@@ -37,4 +37,4 @@ const searchAllImgController = async (req, res) => {
     });
   }
 };
-export default searchAllImgController;
+export default deletePhotosController;
