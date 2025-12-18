@@ -1,27 +1,19 @@
 import multer from "multer";
 import path from "path";
 import fs from "fs";
+import imageType from "../../const/types/imageType.js";
+import uploadPath from "../../const/path/uploadPath.js";
 
-const DATABASE_PATH = "D:/DataBase/uploads";
 
 const createFolderIfNotExists = (folderPath) => {
   if (!fs.existsSync(folderPath)) {
     fs.mkdirSync(folderPath, { recursive: true });
   }
 };
-const ALLOWED_MIME_TYPES = [
-  "image/jpeg",
-  "image/png",
-  "image/webp",
-  "image/jpg",
-  "application/pdf",
-  "audio/mpeg",
-  "video/mp4",
-];
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    const todayFolder = `${DATABASE_PATH}/${
+    const todayFolder = `${uploadPath}/${
       new Date().toISOString().split("T")[0]
     }`;
     createFolderIfNotExists(todayFolder);
@@ -36,7 +28,7 @@ const storage = multer.diskStorage({
 });
 
 const fileFilter = (req, file, cb) => {
-  if (ALLOWED_MIME_TYPES.includes(file.mimetype)) {
+  if (imageType.includes(file.mimetype)) {
     cb(null, true);
   } else {
     cb(new Error(" Invalid file type! Upload proper file."), false);

@@ -20,7 +20,7 @@ const uploadPhotoController = async (req, res) => {
       });
     }
   }
-  
+
   // id  varification
   const check = await idVarification(req.body.phone, req.body.id);
 
