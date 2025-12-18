@@ -3,13 +3,7 @@ import getInfoPhotos from "../../functions/photos/getInfoPhotos.js";
 import saveUploadToDisk from "../../functions/photos/storage/saveUploadToDisk.js";
 
 const uploadPhotoController = async (req, res) => {
-  if (
-    !req.files ||
-    req.files.length === 0 ||
-    !req.body.id ||
-    !req.body.Path ||
-    !req.body.phone
-  ) {
+  if (!req.files || req.files.length === 0 || !req.body.id || !req.body.phone) {
     return res.status(400).json({
       message: "Provide full information for Upload Photos Api",
       status: false,
