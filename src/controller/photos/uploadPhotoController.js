@@ -27,10 +27,8 @@ const uploadPhotoController = async (req, res) => {
   }
   try {
     const photosInformation = await getInfoPhotos(req.files);
-
     const savedData = await saveUploadToDisk(
       photosInformation,
-      req.body.Path,
       process.env.PUBLIC_BASE_URL,
       check.data
     );

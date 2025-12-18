@@ -8,11 +8,11 @@ const saveUploadUser = async (userData) => {
   const userDir = path.join(BASE_DB_PATH, `user_${userData.id}`);
   fs.mkdirSync(userDir, { recursive: true });
 
-  // save user metadata
+  // user metadata
   const metaPath = path.join(userDir, `${userData.id}.json`);
   fs.writeFileSync(metaPath, JSON.stringify(userData, null, 2));
 
-  //  INDEX LOGIC
+  // index logic (phone -> id)
   let indexData = {};
   if (fs.existsSync(INDEX_FILE)) {
     indexData = JSON.parse(fs.readFileSync(INDEX_FILE, "utf-8"));

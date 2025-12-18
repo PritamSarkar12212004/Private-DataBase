@@ -2,93 +2,94 @@ import fs from "fs";
 import path from "path";
 import uniqid from "uniqid";
 
-const BASE_DB_PATH = "D:/DataBase/Uploads/Photos";
-const PUBLIC_ROOT = "uploads/Photos";
+const BASE_DB_PATH = "D:/DataBase/Uploads/Photos/users";
 
-const saveUploadToDisk = async (photos, userFilePath, baseUrl, auth) => {
-  const { id } = await auth;
-  const now = new Date();
-  const uploadId = `${now.getFullYear()}${(now.getMonth() + 1)
-    .toString()
-    .padStart(2, "0")}${now.getDate().toString().padStart(2, "0")}_${now
-    .getHours()
-    .toString()
-    .padStart(2, "0")}${now.getMinutes().toString().padStart(2, "0")}${now
-    .getSeconds()
-    .toString()
-    .padStart(2, "0")}`;
+const saveUploadToDisk = async (photos, baseUrl, auth) => {
+  if (!auth || !auth.id) {
+    throw new Error("Unauthorized upload attempt");
+  }
 
-  // Disk path
-  const rootDir = path.join(BASE_DB_PATH, userFilePath, "uploads", uploadId);
-  const originalDir = path.join(rootDir, "originals");
-  const thumbDir = path.join(rootDir, "thumbnails");
-  const metaDir = path.join(rootDir, "metadata");
+  const { id, userName, userPhone } = auth;
 
-  fs.mkdirSync(originalDir, { recursive: true });
-  fs.mkdirSync(thumbDir, { recursive: true });
-  fs.mkdirSync(metaDir, { recursive: true });
+  // USER ROOT
+  const userRoot = path.join(BASE_DB_PATH, id);
+  const originalsDir = path.join(userRoot, "originals");
+  const thumbsDir = path.join(userRoot, "thumbnails");
 
-  // Public URL relative path
-  const relativePath = `${PUBLIC_ROOT}/${userFilePath}/uploads/${uploadId}`;
+  fs.mkdirSync(originalsDir, { recursive: true });
+  fs.mkdirSync(thumbsDir, { recursive: true });
 
-  const savedImages = [];
+  const metaFile = path.join(userRoot, "metadata.json");
+  const indexFile = path.join(userRoot, "index.json");
+
+  // LOAD EXISTING DATA
+  const metaData = fs.existsSync(metaFile)
+    ? JSON.parse(fs.readFileSync(metaFile, "utf-8"))
+    : {
+        owner: { id, userName, userPhone },
+        images: {},
+      };
+
+  const indexData = fs.existsSync(indexFile)
+    ? JSON.parse(fs.readFileSync(indexFile, "utf-8"))
+    : {};
+
+  const publicBase = `${baseUrl}/public/uploads/Photos/users/${id}`;
 
   for (const photo of photos) {
     const imageId = uniqid();
-    const originalName = `${imageId}${path.extname(photo.filename)}`;
-    const originalDest = path.join(originalDir, originalName);
+    const ext = path.extname(photo.filename);
+    const fileName = `${imageId}${ext}`;
 
-    // Move original file
-    fs.renameSync(photo.path, originalDest);
+    // ORIGINAL
+    fs.renameSync(photo.path, path.join(originalsDir, fileName));
 
-    // Save thumbnails
-    const q40 = `${imageId}-q40.jpg`;
-    const q30 = `${imageId}-q30.jpg`;
-    const q10 = `${imageId}-q10.jpg`;
+    // THUMBNAILS
+    const thumbs = {
+      q40: `${imageId}-q40.jpg`,
+      q30: `${imageId}-q30.jpg`,
+      q10: `${imageId}-q10.jpg`,
+    };
 
-    fs.writeFileSync(path.join(thumbDir, q40), photo.thumbnails.q40);
-    fs.writeFileSync(path.join(thumbDir, q30), photo.thumbnails.q30);
-    fs.writeFileSync(path.join(thumbDir, q10), photo.thumbnails.q10);
+    fs.writeFileSync(path.join(thumbsDir, thumbs.q40), photo.thumbnails.q40);
+    fs.writeFileSync(path.join(thumbsDir, thumbs.q30), photo.thumbnails.q30);
+    fs.writeFileSync(path.join(thumbsDir, thumbs.q10), photo.thumbnails.q10);
 
-    // Per-image metadata
     const imageMeta = {
       imageId,
-      uploadId,
-      ownerId: id,
       originalName: photo.originalName,
       sizeKB: photo.sizeKB,
       paths: {
-        original: `originals/${originalName}`,
-        thumbnails: { q40, q30, q10 },
+        original: `originals/${fileName}`,
+        thumbnails: thumbs,
       },
       publicUrls: {
-        original: `${baseUrl}/public/${relativePath}/originals/${originalName}`,
+        original: `${publicBase}/originals/${fileName}`,
         thumbnails: {
-          q40: `${baseUrl}/public/${relativePath}/thumbnails/${q40}`,
-          q30: `${baseUrl}/public/${relativePath}/thumbnails/${q30}`,
-          q10: `${baseUrl}/public/${relativePath}/thumbnails/${q10}`,
+          q40: `${publicBase}/thumbnails/${thumbs.q40}`,
+          q30: `${publicBase}/thumbnails/${thumbs.q30}`,
+          q10: `${publicBase}/thumbnails/${thumbs.q10}`,
         },
       },
       createdAt: new Date().toISOString(),
     };
 
-    // Save metadata per image
-    fs.writeFileSync(
-      path.join(metaDir, `${imageId}.json`),
-      JSON.stringify(imageMeta, null, 2)
-    );
+    metaData.images[imageId] = imageMeta;
 
-    savedImages.push(imageMeta);
+    indexData[imageId] = {
+      createdAt: imageMeta.createdAt,
+      original: imageMeta.publicUrls.original,
+    };
   }
 
+  fs.writeFileSync(metaFile, JSON.stringify(metaData, null, 2));
+  fs.writeFileSync(indexFile, JSON.stringify(indexData, null, 2));
+
   return {
-    uploadId,
-    relativePath,
-    filesCount: savedImages.length,
-    images: savedImages.map((img) => ({
-      imageId: img.imageId,
-      original: img.publicUrls.original,
-    })),
+    userId: id,
+    totalImages: Object.keys(metaData.images).length,
+    uploaded: photos.length,
+    images: Object.values(indexData),
   };
 };
 
