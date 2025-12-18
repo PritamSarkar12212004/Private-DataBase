@@ -1,3 +1,4 @@
+import imageType from "../../const/types/imageType.js";
 import idVarification from "../../functions/global/token/idVarification.js";
 import getInfoPhotos from "../../functions/photos/getInfoPhotos.js";
 import saveUploadToDisk from "../../functions/photos/storage/saveUploadToDisk.js";
@@ -10,7 +11,16 @@ const uploadPhotoController = async (req, res) => {
       data: null,
     });
   }
-
+  for (const file of req.files) {
+    if (!imageType.includes(file.mimetype)) {
+      return res.status(415).json({
+        status: false,
+        message: `Invalid file type: ${file.originalname}`,
+        allowed: imageType,
+      });
+    }
+  }
+  
   // id  varification
   const check = await idVarification(req.body.phone, req.body.id);
 

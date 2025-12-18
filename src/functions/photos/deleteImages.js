@@ -2,7 +2,6 @@ import fs from "fs";
 import path from "path";
 import PhotosPath from "../../const/path/photosPath.js";
 
-
 const deleteImages = async (id, phone, itemId) => {
   const imageIds = Array.isArray(itemId) ? itemId : [itemId];
 
@@ -44,10 +43,13 @@ const deleteImages = async (id, phone, itemId) => {
     const originalPath = path.join(userRoot, img.paths.original);
     if (fs.existsSync(originalPath)) fs.unlinkSync(originalPath);
 
-    //  Delete thumbnails
-    for (const key of Object.values(img.paths.thumbnails)) {
-      const thumbPath = path.join(userRoot, key);
-      if (fs.existsSync(thumbPath)) fs.unlinkSync(thumbPath);
+    const thumbnailsDir = path.join(userRoot, "thumbnails");
+
+    for (const fileName of Object.values(img.paths.thumbnails)) {
+      const thumbPath = path.join(thumbnailsDir, fileName);
+      if (fs.existsSync(thumbPath)) {
+        fs.unlinkSync(thumbPath);
+      }
     }
 
     //  Remove metadata & index
