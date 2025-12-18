@@ -2,74 +2,76 @@ import fs from "fs";
 import path from "path";
 import PhotosPath from "../../const/path/photosPath.js";
 
-const deleteImages = async (id, phone, itemId) => {
+const deleteFromTrash = async (userId, phone, itemId) => {
   const imageIds = Array.isArray(itemId) ? itemId : [itemId];
 
-  const userRoot = path.join(PhotosPath, id);
-  const metaFile = path.join(userRoot, "metadata.json");
-  const indexFile = path.join(userRoot, "index.json");
-  if (!fs.existsSync(userRoot)) {
-    return { error: { message: "User folder not found" } };
+  const userRoot = path.join(PhotosPath, userId);
+  const trashRoot = path.join(userRoot, "trash");
+
+  const trashMetaFile = path.join(trashRoot, "metadata.json");
+  const trashIndexFile = path.join(trashRoot, "index.json");
+
+  if (!fs.existsSync(trashRoot)) {
+    return { error: { message: "Trash folder not found" } };
   }
 
-  //  Metadata load
-  if (!fs.existsSync(metaFile)) {
-    return { error: { message: "metadata.json not found" } };
+  if (!fs.existsSync(trashMetaFile)) {
+    return { error: { message: "Trash metadata not found" } };
   }
 
-  const metaData = JSON.parse(fs.readFileSync(metaFile, "utf-8"));
+  const trashMeta = JSON.parse(fs.readFileSync(trashMetaFile, "utf-8"));
 
-  //  Phone validation (extra safety)
-  if (metaData.owner?.userPhone !== phone) {
+  // extra safety
+  if (trashMeta.owner?.userPhone !== phone) {
     return { error: { message: "Phone number mismatch" } };
   }
 
-  const indexData = fs.existsSync(indexFile)
-    ? JSON.parse(fs.readFileSync(indexFile, "utf-8"))
+  const trashIndex = fs.existsSync(trashIndexFile)
+    ? JSON.parse(fs.readFileSync(trashIndexFile, "utf-8"))
     : {};
 
   const deleted = [];
   const notFound = [];
 
   for (const imageId of imageIds) {
-    const img = metaData.images?.[imageId];
+    const img = trashMeta.images?.[imageId];
 
     if (!img) {
       notFound.push(imageId);
       continue;
     }
 
-    //  Delete original
-    const originalPath = path.join(userRoot, img.paths.original);
-    if (fs.existsSync(originalPath)) fs.unlinkSync(originalPath);
+    // ---------- DELETE ORIGINAL ----------
+    const originalPath = path.join(trashRoot, img.paths.original);
+    if (fs.existsSync(originalPath)) {
+      fs.unlinkSync(originalPath);
+    }
 
-    const thumbnailsDir = path.join(userRoot, "thumbnails");
-
-    for (const fileName of Object.values(img.paths.thumbnails)) {
-      const thumbPath = path.join(thumbnailsDir, fileName);
+    // ---------- DELETE THUMBNAILS ----------
+    for (const thumbFile of Object.values(img.paths.thumbnails)) {
+      const thumbPath = path.join(trashRoot, "thumbnails", thumbFile);
       if (fs.existsSync(thumbPath)) {
         fs.unlinkSync(thumbPath);
       }
     }
 
-    //  Remove metadata & index
-    delete metaData.images[imageId];
-    delete indexData[imageId];
+    // ---------- REMOVE META ----------
+    delete trashMeta.images[imageId];
+    delete trashIndex[imageId];
 
     deleted.push(imageId);
   }
 
-  //  Save updated files
-  fs.writeFileSync(metaFile, JSON.stringify(metaData, null, 2));
-  fs.writeFileSync(indexFile, JSON.stringify(indexData, null, 2));
+  fs.writeFileSync(trashMetaFile, JSON.stringify(trashMeta, null, 2));
+  fs.writeFileSync(trashIndexFile, JSON.stringify(trashIndex, null, 2));
 
   return {
     status: true,
-    userId: id,
-    deletedCount: deleted.length,
+    userId,
+    permanentlyDeleted: deleted.length,
     deletedImages: deleted,
     notFoundImages: notFound,
   };
 };
 
-export default deleteImages;
+export default deleteFromTrash;

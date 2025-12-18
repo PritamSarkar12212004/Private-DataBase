@@ -1,7 +1,7 @@
 import idVarification from "../../functions/global/token/idVarification.js";
-import trashPhotos from "../../functions/photos/storage/trashPhotos.js";
+import deleteImages from "../../functions/photos/deleteImages.js";
 
-const deletePhotosController = async (req, res) => {
+const trashDeleteController = async (req, res) => {
   if (!req.body.id || !req.body.phone || !req.body.itemId) {
     return res.status(400).json({
       message: "Provide Id and PhoneNumber For Authentication And Photos Id",
@@ -18,7 +18,7 @@ const deletePhotosController = async (req, res) => {
   }
   try {
     // const data = await deleteImages(id, phone, itemId);
-    const data = await trashPhotos(id, phone, itemId);
+    const data = await deleteImages(id, phone, itemId);
 
     if (data.error) {
       return res.status(404).json({
@@ -39,4 +39,4 @@ const deletePhotosController = async (req, res) => {
     });
   }
 };
-export default deletePhotosController;
+export default trashDeleteController;
