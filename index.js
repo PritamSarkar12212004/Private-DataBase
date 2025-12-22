@@ -9,6 +9,7 @@ import http from "http";
 import photoRoute from "./src/routes/photos/photoRoute.js";
 import userRoutes from "./src/routes/user/userRoutes.js";
 import audioRoutes from "./src/routes/audio/audioRoutes.js";
+import videoRoutes from "./src/routes/video/videoRoutes.js";
 
 const app = express();
 const server = http.createServer(app);
@@ -31,6 +32,7 @@ app.use("/api/user", userRoutes);
 app.use("/api", photoRoute);
 
 app.use("/audio/api", audioRoutes);
+app.use("/video/api", videoRoutes);
 
 server.listen(port, () => {
   console.log("Server start at port ", port);
