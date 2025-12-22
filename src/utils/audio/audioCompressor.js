@@ -4,7 +4,6 @@ import fs from 'fs'
 import path from "path";
 const compressAudio = (input, output, bitrate) => {
   return new Promise((resolve, reject) => {
-    // 🔐 ensure output directory exists
     fs.mkdirSync(path.dirname(output), { recursive: true });
 
     execFile(
