@@ -4,7 +4,6 @@ import fs from "fs";
 import imageType from "../../const/types/imageType.js";
 import uploadPath from "../../const/path/uploadPath.js";
 
-
 const createFolderIfNotExists = (folderPath) => {
   if (!fs.existsSync(folderPath)) {
     fs.mkdirSync(folderPath, { recursive: true });

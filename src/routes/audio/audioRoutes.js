@@ -1,6 +1,6 @@
 import express from "express";
-// import upload from "../../services/multer/photosMulterConfig.js";
-
-const route = express.Router(); 
-// route.post(upload.array("files", 10))
+import audioMulterConfig from "../../services/multer/audioMulterConfig.js";
+import audioUploadController from "../../controller/audio/audioUploadController.js";
+const route = express.Router();
+route.post("/upload", audioMulterConfig.array("files", 10),audioUploadController);
 export default route;
