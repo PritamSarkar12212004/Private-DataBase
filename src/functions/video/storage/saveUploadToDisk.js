@@ -3,13 +3,16 @@ import path from "path";
 import uniqid from "uniqid";
 import videoPath from "../../../const/path/videoPath.js";
 
+const toRelative = (fullPath) =>
+  path.relative(videoPath, fullPath).replace(/\\/g, "/");
+
 const saveVideoToDisk = async ({
   userId,
   originalName,
   originalPath,
   thumbnails,
   compressed,
-  baseUrl, // e.g. http://domain.com/public
+  baseUrl,
 }) => {
   const userRoot = path.join(videoPath, userId);
 
@@ -32,9 +35,18 @@ const saveVideoToDisk = async ({
     videoId,
     originalName,
     paths: {
-      original: path.relative(videoPath, originalPath).replace(/\\/g, "/"),
-      compressed,
-      thumbnails,
+      original: toRelative(originalPath),
+      compressed: {
+        q40: toRelative(compressed.q40),
+        q30: toRelative(compressed.q30),
+        q20: toRelative(compressed.q20),
+      },
+      thumbnails: {
+        original: toRelative(thumbnails.original),
+        q40: toRelative(thumbnails.q40),
+        q30: toRelative(thumbnails.q30),
+        q20: toRelative(thumbnails.q20),
+      },
     },
     publicUrls: {
       original: `${publicBase}/originals/${path.basename(originalPath)}`,
