@@ -5,6 +5,7 @@ import documentMulterConfig from "../../services/multer/documentMulterConfig.js"
 import docDonloaderController from "../../controller/document/docDonloaderController.js";
 import fetchMainDocumentController from "../../controller/document/fetchMainDocumentController.js";
 import deleteDocumentController from "../../controller/document/deleteDocumentController.js";
+import fetchTrashDocController from "../../controller/document/fetchTrashDocController.js";
 
 const router = express.Router();
 
@@ -14,8 +15,8 @@ router.post(
   documentUploadController
 );
 router.post("/doc/fetch/main-doc", asyn_handle(fetchMainDocumentController));
-// router.post("/doc/fetch/trash-doc", fetchTrashVideoController);
-router.post("/doc/delete", deleteDocumentController);
+router.post("/doc/fetch/trash-doc", asyn_handle(fetchTrashDocController));
+router.post("/doc/delete", asyn_handle(deleteDocumentController));
 // router.post("/doc/trash-delete", trashDeleteVideoController);
 
 router.get("/doc/download/:userId", asyn_handle(docDonloaderController));
