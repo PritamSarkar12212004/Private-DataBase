@@ -2,7 +2,8 @@ import idVarification from "../../functions/global/token/idVarification.js";
 import trashVideos from "../../functions/video/trashVideos.js";
 
 const deleteVideoController = async (req, res) => {
-    console.log(req.body)
+  const PUBLIC_BASE_URL = process.env.PUBLIC_BASE_URL;
+
   if (!req.body.id || !req.body.phone || !req.body.itemId) {
     return res.status(400).json({
       status: false,
@@ -13,7 +14,7 @@ const deleteVideoController = async (req, res) => {
 
   const { id, phone, itemId } = req.body;
 
-  // ✅ ID VERIFICATION
+  // ID VERIFICATION
   const check = await idVarification(phone, id);
   if (check.error) {
     return res.status(404).json({
@@ -24,7 +25,7 @@ const deleteVideoController = async (req, res) => {
   }
 
   try {
-    const data = await trashVideos(id, phone, itemId);
+    const data = await trashVideos(id, phone, itemId,PUBLIC_BASE_URL);
 
     if (data.error) {
       return res.status(404).json({
