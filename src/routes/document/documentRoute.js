@@ -5,7 +5,7 @@ import documentMulterConfig from "../../services/multer/documentMulterConfig.js"
 const router = express.Router();
 
 router.post(
-  "/video/upload",
+  "/doc/upload",
   documentMulterConfig.array("doc", 10),
   documentUploadController
 );
