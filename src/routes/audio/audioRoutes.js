@@ -11,8 +11,8 @@ route.post(
   audioMulterConfig.array("files", 10),
   audioUploadController
 );
-route.post("/audio/fetch/main-image", fetchMainAudioController);
-route.post("/audio/fetch/trash-image", fetchTrashAudioController);
+route.post("/audio/fetch/main-audio", fetchMainAudioController);
+route.post("/audio/fetch/trash-audio", fetchTrashAudioController);
 route.post("/audio/delete", deleteAudioController);
 route.post("/audio/trash-delete", trashDeleteAudioController);
 export default route;
