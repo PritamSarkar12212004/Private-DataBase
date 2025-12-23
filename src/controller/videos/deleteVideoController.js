@@ -25,7 +25,7 @@ const deleteVideoController = async (req, res) => {
   }
 
   try {
-    const data = await trashVideos(id, phone, itemId,PUBLIC_BASE_URL);
+    const data = await trashVideos(id, phone, itemId, PUBLIC_BASE_URL);
 
     if (data.error) {
       return res.status(404).json({
