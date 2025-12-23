@@ -6,7 +6,7 @@ const router = express.Router();
 
 router.post(
   "/video/upload",
-  documentMulterConfig.array("videos", 10),
+  documentMulterConfig.array("doc", 10),
   documentUploadController
 );
 // router.post("/doc/fetch/main-doc", fetchMainVideoController);

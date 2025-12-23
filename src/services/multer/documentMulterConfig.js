@@ -2,13 +2,13 @@ import multer from "multer";
 import path from "path";
 import fs from "fs";
 import documentType from "../../const/types/documentType.js";
+import documentTempPath from "../../const/path/temp/documentTempPath.js";
 
-const UPLOAD_ROOT = "D:/DataBase/Uploads/Documents/tmp";
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    fs.mkdirSync(UPLOAD_ROOT, { recursive: true });
-    cb(null, UPLOAD_ROOT);
+    fs.mkdirSync(documentTempPath, { recursive: true });
+    cb(null, documentTempPath);
   },
 
   filename: (req, file, cb) => {
