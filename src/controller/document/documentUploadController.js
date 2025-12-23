@@ -8,7 +8,6 @@ import documentPath from "../../const/path/documentPath.js";
 
 const documentUploadController = async (req, res) => {
   const PUBLIC_BASE_URL = process.env.PUBLIC_BASE_URL;
-  console.log(PUBLIC_BASE_URL);
   if (!req.files || !req.body.id || !req.body.phone) {
     return res.status(400).json({
       status: false,
@@ -66,23 +65,35 @@ const documentUploadController = async (req, res) => {
         .relative(userRoot, destPath)
         .replace(/\\/g, "/");
 
-      const publicUrl = `${PUBLIC_BASE_URL}/public/uploads/Documents/users/${userId}/${relativePath}`;
+      const viewUrl = `${PUBLIC_BASE_URL}/public/uploads/Documents/users/${userId}/${relativePath}`;
 
+      const downloadUrl = `${PUBLIC_BASE_URL}/doc/api/doc/download/${userId}?path=${encodeURIComponent(
+        relativePath
+      )}`;
       metaData.documents[documentId] = {
         documentId,
         originalName: file.originalname,
         extension: extInfo.extension,
         category: extInfo.category,
         size: file.size,
-        paths: { original: relativePath },
-        publicUrl,
+
+        paths: {
+          original: relativePath,
+        },
+
+        urls: {
+          view: viewUrl,
+          download: downloadUrl,
+        },
+
         createdAt: new Date().toISOString(),
       };
 
       indexData[documentId] = {
         name: file.originalname,
         category: extInfo.category,
-        url: publicUrl,
+        view: viewUrl,
+        download: downloadUrl,
       };
 
       uploaded.push(metaData.documents[documentId]);
