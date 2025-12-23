@@ -3,6 +3,7 @@ import videoMulterConfig from "../../services/multer/videoMulterConfig.js";
 import uploadVideoController from "../../controller/videos/uploadVideoController.js";
 import fetchMainVideoController from "../../controller/videos/fetchMainVideoController.js";
 import deleteVideoController from "../../controller/videos/deleteVideoController.js";
+import fetchTrashVideoController from "../../controller/videos/fetchTrashVideoController.js";
 
 const router = express.Router();
 
@@ -12,7 +13,7 @@ router.post(
   uploadVideoController
 );
 router.post("/video/fetch/main-video", fetchMainVideoController);
-// router.post("/video/fetch/trash-image", fetchTrashImageController);
+router.post("/video/fetch/trash-video", fetchTrashVideoController);
 router.post("/video/delete", deleteVideoController);
 // router.post("/video/trash-delete", trashDeleteController);
 
