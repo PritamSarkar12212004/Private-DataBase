@@ -6,6 +6,7 @@ import docDonloaderController from "../../controller/document/docDonloaderContro
 import fetchMainDocumentController from "../../controller/document/fetchMainDocumentController.js";
 import deleteDocumentController from "../../controller/document/deleteDocumentController.js";
 import fetchTrashDocController from "../../controller/document/fetchTrashDocController.js";
+import trashDeleteVideoController from "../../controller/document/trashDeleteVideoController.js";
 
 const router = express.Router();
 
@@ -17,7 +18,7 @@ router.post(
 router.post("/doc/fetch/main-doc", asyn_handle(fetchMainDocumentController));
 router.post("/doc/fetch/trash-doc", asyn_handle(fetchTrashDocController));
 router.post("/doc/delete", asyn_handle(deleteDocumentController));
-// router.post("/doc/trash-delete", trashDeleteVideoController);
+router.post("/doc/trash-delete", trashDeleteVideoController);
 
 router.get("/doc/download/:userId", asyn_handle(docDonloaderController));
 
